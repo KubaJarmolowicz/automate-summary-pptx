@@ -20,9 +20,7 @@ export class WebScraperService {
       ],
       headless: true,
       executablePath:
-        process.env.NODE_ENV === "production"
-          ? "/usr/bin/google-chrome-stable"
-          : undefined,
+        process.env.NODE_ENV === "production" ? "/usr/bin/chromium" : undefined,
     });
 
     try {

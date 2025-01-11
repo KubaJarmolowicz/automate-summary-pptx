@@ -22,6 +22,8 @@ services:
           type: redis
           name: session-store
           property: connectionString
+      - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+        value: true
 
   - type: redis
     name: session-store
