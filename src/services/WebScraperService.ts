@@ -21,7 +21,7 @@ export class WebScraperService {
         "--single-process",
       ],
       headless: true,
-      executablePath: undefined,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
       dumpio: true,
     };
 

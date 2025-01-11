@@ -4,7 +4,9 @@ services:
     env: node
     buildCommand: |
       apt-get update
-      apt-get install -y chromium
+      apt-get install -y chromium chromium-sandbox
+      export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
       npm install
       npm run build
     startCommand: node dist/app.js
@@ -22,6 +24,8 @@ services:
           type: redis
           name: session-store
           property: connectionString
+      - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+        value: "true"
       - key: PUPPETEER_EXECUTABLE_PATH
         value: /usr/bin/chromium
 
