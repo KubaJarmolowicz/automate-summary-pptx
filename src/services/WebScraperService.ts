@@ -11,7 +11,22 @@ export class WebScraperService {
   private logger = new LogService();
 
   async scrapeUrl(url: string): Promise<ScrapedStats> {
-    const browser = await puppeteer.launch({
+    console.log("Environment:", process.env.NODE_ENV);
+
+    // Check if Chrome exists
+    const { execSync } = require("child_process");
+    try {
+      const chromeVersion = execSync("google-chrome --version").toString();
+      console.log("Chrome version:", chromeVersion);
+      console.log(
+        "Chrome locations:",
+        execSync("which google-chrome").toString()
+      );
+    } catch (err) {
+      console.log("Error checking Chrome:", err);
+    }
+
+    const browserOptions = {
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -20,8 +35,13 @@ export class WebScraperService {
       ],
       headless: true,
       executablePath:
-        process.env.NODE_ENV === "production" ? "/usr/bin/chromium" : undefined,
-    });
+        process.env.NODE_ENV === "production"
+          ? "/opt/google/chrome/chrome"
+          : undefined,
+    };
+
+    console.log("Launching browser with options:", browserOptions);
+    const browser = await puppeteer.launch(browserOptions);
 
     try {
       const page = await browser.newPage();
