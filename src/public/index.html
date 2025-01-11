@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Presentation Generator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <form id="presentationForm" class="form-container">
+      <div class="url-inputs">
+        <input type="url" name="url1" placeholder="Enter first URL" required />
+        <input type="url" name="url2" placeholder="Enter second URL" required />
+        <input type="url" name="url3" placeholder="Enter third URL" required />
+      </div>
+
+      <div class="file-inputs">
+        <input type="file" name="image1" accept="image/*" required />
+        <input type="file" name="image2" accept="image/*" required />
+        <input type="file" name="image3" accept="image/*" required />
+      </div>
+
+      <input
+        type="number"
+        name="ratio"
+        step="0.01"
+        placeholder="Enter ratio"
+        required
+      />
+      <input type="email" name="email" placeholder="Your email" required />
+
+      <button type="submit">Generate Presentation</button>
+    </form>
+    <script src="main.js"></script>
+  </body>
+</html>
