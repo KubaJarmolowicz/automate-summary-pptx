@@ -13,19 +13,6 @@ export class WebScraperService {
   async scrapeUrl(url: string): Promise<ScrapedStats> {
     console.log("Environment:", process.env.NODE_ENV);
 
-    // Check if Chrome exists
-    const { execSync } = require("child_process");
-    try {
-      const chromeVersion = execSync("google-chrome --version").toString();
-      console.log("Chrome version:", chromeVersion);
-      console.log(
-        "Chrome locations:",
-        execSync("which google-chrome").toString()
-      );
-    } catch (err) {
-      console.log("Error checking Chrome:", err);
-    }
-
     const browserOptions = {
       args: [
         "--no-sandbox",
@@ -34,10 +21,7 @@ export class WebScraperService {
         "--single-process",
       ],
       headless: true,
-      executablePath:
-        process.env.NODE_ENV === "production"
-          ? "/opt/google/chrome/chrome"
-          : undefined,
+      executablePath: undefined,
     };
 
     console.log("Launching browser with options:", browserOptions);

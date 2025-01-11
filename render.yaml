@@ -3,11 +3,7 @@ services:
     name: presentation-generator
     env: node
     buildCommand: |
-      curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&
-      apt-get update &&
-      apt-get install -y ./google-chrome-stable_current_amd64.deb &&
-      npm install &&
-      npm run build
+      npm install && npm run build
     startCommand: node dist/app.js
     envVars:
       - key: NODE_ENV
