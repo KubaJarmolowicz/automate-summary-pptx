@@ -11,7 +11,19 @@ export class WebScraperService {
   private logger = new LogService();
 
   async scrapeUrl(url: string): Promise<ScrapedStats> {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--single-process",
+      ],
+      headless: true,
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? "/usr/bin/google-chrome-stable"
+          : undefined,
+    });
 
     try {
       const page = await browser.newPage();

@@ -2,7 +2,11 @@ services:
   - type: web
     name: presentation-generator
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: |
+      apt-get update -y &&
+      apt-get install -y chromium &&
+      npm install &&
+      npm run build
     startCommand: node dist/app.js
     envVars:
       - key: NODE_ENV
