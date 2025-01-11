@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import path from "path";
 
+const PUBLIC_DIR =
+  process.env.NODE_ENV === "production"
+    ? path.join(process.cwd(), "dist", "public")
+    : path.join(__dirname, "../public");
+
 export const protectForm = (
   req: Request & { session: any },
   res: Response,
@@ -20,7 +25,7 @@ export const protectForm = (
   if (req.session.isAuthenticated) {
     console.log("User is authenticated, proceeding...");
     if (req.path === "/") {
-      return res.sendFile(path.join(__dirname, "../public/index.html"));
+      return res.sendFile(path.join(PUBLIC_DIR, "index.html"));
     }
     return next();
   }

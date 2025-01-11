@@ -42,7 +42,13 @@ app.use(
 );
 
 app.use((req, res, next) => protectForm(req, res, next));
-app.use(express.static(path.join(__dirname, "public")));
+
+const PUBLIC_DIR =
+  process.env.NODE_ENV === "production"
+    ? path.join(process.cwd(), "dist", "public")
+    : path.join(__dirname, "public");
+
+app.use(express.static(PUBLIC_DIR));
 
 // Rate limiting
 const limiter = rateLimit({
