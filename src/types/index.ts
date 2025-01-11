@@ -4,7 +4,14 @@ export interface ImageSpecs {
   format: string;
 }
 
+export interface ScrapedStats {
+  totalImpressions: string;
+  uniqueImpressions: string;
+  uniqueClicks: string;
+  urlIndex: number;
+}
+
 export interface ProcessedData {
-  metrics: any;
+  scrapedData: Record<number, ScrapedStats>;
   images: Buffer[];
 }

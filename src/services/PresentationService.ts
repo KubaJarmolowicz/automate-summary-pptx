@@ -5,35 +5,59 @@ import { readFileSync } from "fs";
 import { ProcessedData } from "../types";
 
 export class PresentationService {
-  private readonly TEMPLATE_PATH = "templates/campaign-template.pptx";
+  private readonly TEMPLATE_PATH = "templates/template.pptx";
 
   async generatePresentation(data: ProcessedData): Promise<Buffer> {
     const template = readFileSync(this.TEMPLATE_PATH);
-    const imageModule = new ImageModule({
+
+    const opts: {
+      centered: boolean;
+      fileType: "pptx" | "docx";
+      getImage: (tagValue: string) => Buffer;
+      getSize: () => [number, number];
+    } = {
       centered: false,
+      fileType: "pptx",
       getImage: (tagValue: string) => {
-        // tagValue will be 'image1', 'image2' etc.
-        const imageIndex = parseInt(tagValue.replace("image", "")) - 1;
+        console.log("Image module - tagValue:", tagValue);
+        const imageIndex = parseInt(tagValue) - 1;
+        if (!data.images[imageIndex]) {
+          console.error(
+            `No image found for index ${imageIndex}, available images:`,
+            data.images.length
+          );
+          throw new Error(`No image found for index ${imageIndex}`);
+        }
         return data.images[imageIndex];
       },
-      getSize: () => [600, 400], // Default size, adjust as needed
-    });
+      getSize: () => [191, 415],
+    };
 
+    const imageModule = new ImageModule(opts);
     const zip = new PizZip(template);
     const doc = new Docxtemplater(zip, {
       modules: [imageModule],
-      paragraphLoop: true,
-      linebreaks: true,
     });
 
-    doc.setData({
-      metrics: data.metrics,
-      image1: "image1",
-      image2: "image2",
-      image3: "image3",
+    // Create template data
+    const templateData: Record<string, string | number> = {};
+
+    // Add image placeholders with % prefix
+    data.images.forEach((_, index) => {
+      templateData[`image${index + 1}`] = index + 1;
     });
 
-    doc.render();
+    // Add stats
+    Object.values(data.scrapedData).forEach((stats) => {
+      const index = stats.urlIndex;
+      templateData[`totalImpressions${index}`] = stats.totalImpressions;
+      templateData[`uniqueImpressions${index}`] = stats.uniqueImpressions;
+      templateData[`uniqueClicks${index}`] = stats.uniqueClicks;
+    });
+
+    // Single render call with data
+    doc.render(templateData);
+
     return doc.getZip().generate({ type: "nodebuffer" });
   }
 }

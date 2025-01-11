@@ -29,3 +29,43 @@ button {
 button:hover {
   background: #0052cc;
 }
+
+.file-inputs input[type="file"] {
+  cursor: pointer;
+  padding: 1rem;
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.file-inputs input[type="file"]:hover {
+  border-color: #0066ff;
+  background: rgba(0, 102, 255, 0.05);
+}
+
+.file-inputs input[type="file"]:focus {
+  outline: none;
+  border-color: #0066ff;
+}
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}

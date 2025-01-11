@@ -4,6 +4,7 @@ declare module "docxtemplater-image-module-free" {
       centered?: boolean;
       getImage(tagValue: string): Buffer;
       getSize(): [number, number];
+      fileType: "docx" | "pptx";
     });
   }
 }
