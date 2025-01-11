@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Presentation Generator</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
   </head>
   <body>
+    <div id="toast-container"></div>
     <form
       id="presentationForm"
       class="form-container"
       action="/api/presentations/generate"
       method="POST"
     >
+      <h1 class="form-title">Generator prezentacji</h1>
       <div class="text-inputs">
         <input
           type="text"

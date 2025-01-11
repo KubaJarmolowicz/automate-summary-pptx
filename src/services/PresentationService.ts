@@ -48,7 +48,7 @@ export class PresentationService {
       (parseInt(data.stats.totalClicks) /
         parseInt(data.stats.totalImpressions)) *
       100;
-    const benchmarkValue = parseFloat(data.benchmark);
+    const benchmarkValue = parseFloat(data.benchmark.replace(",", "."));
 
     const templateData = {
       campaignName: data.campaignName,

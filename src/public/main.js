@@ -75,12 +75,10 @@ document
         );
       }
 
-      alert("Presentation generated and sent to your email!");
+      showToast("Prezentacja wysłana na maila!", "success");
     } catch (error) {
       console.error(error);
-      alert(
-        error.message || "Failed to generate presentation. Please try again."
-      );
+      showToast(error.message || "Coś się nie udało :(", "error");
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
@@ -92,3 +90,28 @@ document.querySelector(".file-inputs").addEventListener("click", () => {
   const input = document.querySelector('.file-inputs input[type="file"]');
   if (input) input.focus();
 });
+
+function showToast(message, type = "success") {
+  const container = document.getElementById("toast-container");
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  // Trigger reflow to enable animation
+  toast.offsetHeight;
+
+  // Show toast
+  requestAnimationFrame(() => {
+    toast.classList.add("show");
+  });
+
+  // Remove toast after 5 seconds
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => {
+      container.removeChild(toast);
+    }, 300); // Wait for hide animation
+  }, 5000);
+}

@@ -27,7 +27,6 @@ export class WebScraperService {
         (el) => el.textContent?.trim() || "0"
       );
 
-      console.log(`Got unique users text:`, uniqueUsersText);
       const [uniqueImpressions] = uniqueUsersText.split(" / ");
 
       const stats = {
@@ -39,7 +38,6 @@ export class WebScraperService {
         totalClicks: totalClicksText,
       };
 
-      console.log(`Scraped data for URL:`, stats);
       return stats;
     } catch (error) {
       await this.logger.logError("WebScraper", error as Error);
