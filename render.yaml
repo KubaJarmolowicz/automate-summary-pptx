@@ -3,7 +3,7 @@ services:
     name: presentation-generator
     env: node
     buildCommand: npm install && npm run build
-    startCommand: npm start
+    startCommand: node dist/app.js
     envVars:
       - key: NODE_ENV
         value: production
