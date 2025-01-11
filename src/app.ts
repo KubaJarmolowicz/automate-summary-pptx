@@ -6,6 +6,8 @@ import rateLimit from "express-rate-limit";
 import { LogService } from "./services/LogService";
 import path from "path";
 import routes from "./routes";
+import { protectForm } from "./middleware/authMiddleware";
+import session from "express-session";
 
 const app = express();
 const logger = new LogService();
@@ -13,6 +15,18 @@ const logger = new LogService();
 // Middleware
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+    },
+  })
+);
+app.use((req, res, next) => protectForm(req, res, next));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Rate limiting

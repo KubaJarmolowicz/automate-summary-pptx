@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: presentation-generator
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FORM_PASSWORD
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: SENDGRID_VERIFIED_EMAIL
+        sync: false
