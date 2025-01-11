@@ -13,45 +13,32 @@
       action="/api/presentations/generate"
       method="POST"
     >
-      <div class="url-inputs">
-        <input type="url" name="url1" placeholder="Enter first URL" required />
-        <input type="url" name="url2" placeholder="Enter second URL" required />
-        <input type="url" name="url3" placeholder="Enter third URL" required />
+      <div class="text-inputs">
+        <input
+          type="text"
+          name="campaignName"
+          placeholder="Nazwa kampanii"
+          required
+        />
+        <input type="text" name="format" placeholder="Format" required />
+        <input type="text" name="date" placeholder="Data" required />
+        <input type="text" name="goal" placeholder="Cel" required />
+        <input type="text" name="url" placeholder="URL" required />
+        <input type="text" name="benchmark" placeholder="Benchmark" required />
+        <input type="text" name="category" placeholder="Kategoria" required />
       </div>
 
       <div class="file-inputs">
         <input
           type="file"
-          name="image1"
+          name="image"
           accept="image/*"
           required
-          placeholder="Click to upload or paste image"
-        />
-        <input
-          type="file"
-          name="image2"
-          accept="image/*"
-          required
-          placeholder="Click to upload or paste image"
-        />
-        <input
-          type="file"
-          name="image3"
-          accept="image/*"
-          required
-          placeholder="Click to upload or paste image"
+          placeholder="Obrazek"
         />
       </div>
 
-      <input
-        type="number"
-        name="ratio"
-        step="0.01"
-        placeholder="Enter ratio"
-        required
-      />
       <input type="email" name="email" placeholder="Your email" required />
-
       <button type="submit">Generate Presentation</button>
     </form>
     <script src="main.js"></script>

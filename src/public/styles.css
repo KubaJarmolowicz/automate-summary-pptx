@@ -24,6 +24,7 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+  position: relative;
 }
 
 button:hover {
@@ -49,19 +50,22 @@ button:hover {
 }
 
 .spinner {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: #fff;
   animation: spin 1s ease-in-out infinite;
-  margin-left: 8px;
+  display: inline-block;
 }
 
 @keyframes spin {
   to {
-    transform: rotate(360deg);
+    transform: translateY(-50%) rotate(360deg);
   }
 }
 

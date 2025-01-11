@@ -7,6 +7,22 @@ import { ProcessedData } from "../types";
 export class PresentationService {
   private readonly TEMPLATE_PATH = "templates/template.pptx";
 
+  private formatNumber(num: string): string {
+    return parseInt(num)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  }
+
+  private formatDecimal(num: number, decimals: number = 2): string {
+    return num.toFixed(decimals).replace(".", ",");
+  }
+
+  private formatPP(ctr: number, benchmark: number): string {
+    const diff = ctr - benchmark;
+    const sign = diff > 0 ? "+" : "";
+    return `(${sign}${this.formatDecimal(diff)} p.p.)`;
+  }
+
   async generatePresentation(data: ProcessedData): Promise<Buffer> {
     const template = readFileSync(this.TEMPLATE_PATH);
 
@@ -18,18 +34,7 @@ export class PresentationService {
     } = {
       centered: false,
       fileType: "pptx",
-      getImage: (tagValue: string) => {
-        console.log("Image module - tagValue:", tagValue);
-        const imageIndex = parseInt(tagValue) - 1;
-        if (!data.images[imageIndex]) {
-          console.error(
-            `No image found for index ${imageIndex}, available images:`,
-            data.images.length
-          );
-          throw new Error(`No image found for index ${imageIndex}`);
-        }
-        return data.images[imageIndex];
-      },
+      getImage: () => data.image,
       getSize: () => [191, 415],
     };
 
@@ -39,23 +44,43 @@ export class PresentationService {
       modules: [imageModule],
     });
 
-    // Create template data
-    const templateData: Record<string, string | number> = {};
+    const ctr =
+      (parseInt(data.stats.totalClicks) /
+        parseInt(data.stats.totalImpressions)) *
+      100;
+    const benchmarkValue = parseFloat(data.benchmark);
 
-    // Add image placeholders with % prefix
-    data.images.forEach((_, index) => {
-      templateData[`image${index + 1}`] = index + 1;
-    });
+    const templateData = {
+      campaignName: data.campaignName,
+      format: data.format,
+      date: data.date,
+      goal: this.formatNumber(data.goal),
+      url: data.url,
+      benchmark: `${data.benchmark}%`,
+      category: data.category,
+      image: "1", // Image placeholder
+      totalImpressions: this.formatNumber(data.stats.totalImpressions),
+      uniqueImpressions: this.formatNumber(data.stats.uniqueImpressions),
+      totalClicks: this.formatNumber(data.stats.totalClicks),
 
-    // Add stats
-    Object.values(data.scrapedData).forEach((stats) => {
-      const index = stats.urlIndex;
-      templateData[`totalImpressions${index}`] = stats.totalImpressions;
-      templateData[`uniqueImpressions${index}`] = stats.uniqueImpressions;
-      templateData[`uniqueClicks${index}`] = stats.uniqueClicks;
-    });
+      // New calculated fields (using raw numbers for calculations)
+      realizationPercent: `${this.formatDecimal(
+        (parseInt(data.stats.totalImpressions) / parseInt(data.goal)) * 100,
+        1
+      )}%`,
 
-    // Single render call with data
+      frequency: this.formatDecimal(
+        parseInt(data.stats.totalImpressions) /
+          parseInt(data.stats.uniqueImpressions),
+        1
+      ),
+
+      ctr: `${this.formatDecimal(ctr)}%`,
+
+      pp: this.formatPP(ctr, benchmarkValue),
+      ppIsPositive: ctr > benchmarkValue,
+    };
+
     doc.render(templateData);
 
     return doc.getZip().generate({ type: "nodebuffer" });

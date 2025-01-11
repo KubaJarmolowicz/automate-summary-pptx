@@ -1,17 +1,29 @@
-export interface ImageSpecs {
-  width: number;
-  height: number;
-  format: string;
-}
-
-export interface ScrapedStats {
+interface ScrapedStats {
   totalImpressions: string;
   uniqueImpressions: string;
-  uniqueClicks: string;
-  urlIndex: number;
+  totalClicks: string;
 }
 
 export interface ProcessedData {
-  scrapedData: Record<number, ScrapedStats>;
-  images: Buffer[];
+  campaignName: string;
+  format: string;
+  date: string;
+  goal: string;
+  url: string;
+  benchmark: string;
+  category: string;
+  image: Buffer;
+  stats: ScrapedStats;
+}
+
+export interface PresentationRequest {
+  campaignName: string;
+  format: string;
+  date: string;
+  goal: string;
+  url: string;
+  benchmark: string;
+  category: string;
+  image: string; // base64 string
+  email: string;
 }

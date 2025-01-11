@@ -1,5 +1,4 @@
 import sharp, { FormatEnum } from "sharp";
-import { ImageSpecs } from "../types";
 import { LogService } from "./LogService";
 
 export class ImageService {

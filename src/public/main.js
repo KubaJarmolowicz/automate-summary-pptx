@@ -1,13 +1,28 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("presentationForm");
-  const urlContainer = form.querySelector(".url-inputs");
-  const fileContainer = form.querySelector(".file-inputs");
 
-  // Setup paste handlers for existing file inputs
+  // Setup paste handler for file input
   document
-    .querySelectorAll('.file-inputs input[type="file"]')
-    .forEach(setupPasteHandler);
+    .querySelector('.file-inputs input[type="file"]')
+    .addEventListener("paste", handlePaste);
 });
+
+function handlePaste(e) {
+  e.preventDefault();
+  const items = e.clipboardData?.items;
+
+  for (const item of items) {
+    if (item.type.startsWith("image/")) {
+      const file = item.getAsFile();
+      if (file) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        e.target.files = dataTransfer.files;
+        e.target.dispatchEvent(new Event("change"));
+      }
+    }
+  }
+}
 
 document
   .getElementById("presentationForm")
@@ -17,29 +32,30 @@ document
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
 
-    // Add spinner and disable button
     submitBtn.disabled = true;
     submitBtn.innerHTML = `${originalText}<span class="spinner"></span>`;
 
     const formData = new FormData(e.target);
     const data = {
-      urls: [formData.get("url1"), formData.get("url2"), formData.get("url3")],
-      ratio: parseFloat(formData.get("ratio")),
+      campaignName: formData.get("campaignName"),
+      format: formData.get("format"),
+      date: formData.get("date"),
+      goal: formData.get("goal"),
+      url: formData.get("url"),
+      benchmark: formData.get("benchmark"),
+      category: formData.get("category"),
       email: formData.get("email"),
     };
 
-    // Convert file inputs to base64
-    const imagePromises = ["image1", "image2", "image3"].map(async (name) => {
-      const file = formData.get(name);
-      if (!file) return null;
-      return new Promise((resolve) => {
+    // Convert image to base64
+    const file = formData.get("image");
+    if (file) {
+      data.image = await new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result.split(",")[1]);
         reader.readAsDataURL(file);
       });
-    });
-
-    data.images = await Promise.all(imagePromises);
+    }
 
     try {
       const response = await fetch("/api/presentations/generate", {
@@ -66,41 +82,13 @@ document
         error.message || "Failed to generate presentation. Please try again."
       );
     } finally {
-      // Reset button state
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
     }
   });
 
-document
-  .querySelectorAll('.file-inputs input[type="file"]')
-  .forEach((input) => {
-    input.addEventListener("paste", async (e) => {
-      e.preventDefault();
-      const items = e.clipboardData?.items;
-
-      for (const item of items) {
-        if (item.type.startsWith("image/")) {
-          const file = item.getAsFile();
-          if (file) {
-            // Create a DataTransfer object to set the input's files
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            input.files = dataTransfer.files;
-
-            // Update visual feedback
-            input.dispatchEvent(new Event("change"));
-          }
-        }
-      }
-    });
-  });
-
-// Make inputs paste-aware
-document.querySelectorAll(".file-inputs").forEach((div) => {
-  div.addEventListener("click", () => {
-    // Focus the input to enable paste
-    const input = div.querySelector('input[type="file"]');
-    if (input) input.focus();
-  });
+// Make input paste-aware
+document.querySelector(".file-inputs").addEventListener("click", () => {
+  const input = document.querySelector('.file-inputs input[type="file"]');
+  if (input) input.focus();
 });

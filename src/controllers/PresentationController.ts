@@ -14,16 +14,21 @@ export class PresentationController {
 
   async generate(req: Request, res: Response): Promise<void> {
     try {
-      const { urls, images, email } = req.body;
+      const {
+        campaignName,
+        format,
+        date,
+        goal,
+        url,
+        benchmark,
+        category,
+        image,
+        email,
+      } = req.body;
 
       // Validate input
-      if (!urls?.length) {
-        res.status(400).json({ error: "At least one URL is required" });
-        return;
-      }
-
-      if (!images?.length) {
-        res.status(400).json({ error: "At least one image is required" });
+      if (!image) {
+        res.status(400).json({ error: "Image is required" });
         return;
       }
 
@@ -33,25 +38,28 @@ export class PresentationController {
       }
 
       try {
-        // Scrape URLs
-        const scrapedData = await this.scraperService.scrapeUrls(urls);
+        // Scrape URL
+        const scrapedStats = await this.scraperService.scrapeUrl(url);
 
-        // Process images
-        const processedImages = await Promise.all(
-          images.map((base64: string, index: number) => {
-            const imageBuffer = Buffer.from(base64, "base64");
-            return this.imageService.processImage(
-              imageBuffer,
-              `slide${index + 1}-image`
-            );
-          })
+        // Process image
+        const imageBuffer = Buffer.from(image, "base64");
+        const processedImage = await this.imageService.processImage(
+          imageBuffer,
+          "slide-image"
         );
 
         // Generate presentation
         const presentation =
           await this.presentationService.generatePresentation({
-            scrapedData,
-            images: processedImages,
+            campaignName,
+            format,
+            date,
+            goal,
+            url,
+            benchmark,
+            category,
+            image: processedImage,
+            stats: scrapedStats, // Pass scraped stats to presentation
           });
 
         // Send email
