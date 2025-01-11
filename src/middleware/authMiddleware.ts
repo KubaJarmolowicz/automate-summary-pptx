@@ -5,11 +5,19 @@ export const protectForm = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("Auth check:", {
+    path: req.path,
+    method: req.method,
+    isAuthenticated: req.session.isAuthenticated,
+    sessionID: req.sessionID,
+  });
+
   if (req.path.endsWith(".css") || req.path.endsWith(".png")) {
     return next();
   }
 
   if (req.session.isAuthenticated) {
+    console.log("User is authenticated, proceeding...");
     return next();
   }
 
@@ -17,11 +25,16 @@ export const protectForm = (
     req.method === "POST" &&
     req.body.password === process.env.FORM_PASSWORD
   ) {
+    console.log("Password correct, setting session...");
     req.session.isAuthenticated = true;
-    res.redirect("/");
-    return;
+    // Wait for session to be set before redirect
+    return req.session.save(() => {
+      console.log("Session saved, redirecting...");
+      res.redirect("/");
+    });
   }
 
+  console.log("Not authenticated, showing login form...");
   res.status(401).send(`
     <html>
       <head>
