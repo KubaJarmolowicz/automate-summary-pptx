@@ -16,6 +16,9 @@ const RedisStore = ConnectRedis(session);
 const app = express();
 const logger = new LogService();
 
+// Trust proxy (needed for Render.com)
+app.set("trust proxy", 1);
+
 // Middleware
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
