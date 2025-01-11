@@ -1,4 +1,3 @@
-import puppeteer from "puppeteer";
 import { LogService } from "./LogService";
 
 interface ScrapedStats {
@@ -11,52 +10,38 @@ export class WebScraperService {
   private logger = new LogService();
 
   async scrapeUrl(url: string): Promise<ScrapedStats> {
-    console.log("Environment:", process.env.NODE_ENV);
-
-    const browserOptions = {
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-      ],
-      headless: true,
-      executablePath: undefined,
-    };
-
-    console.log("Launching browser with options:", browserOptions);
-    const browser = await puppeteer.launch(browserOptions);
-
     try {
-      const page = await browser.newPage();
-      await page.goto(url);
+      const response = await fetch(url);
+      const html = await response.text();
 
-      const uniqueUsersText = await page.$eval(
-        ".panel-body .col-md-3:nth-child(3) h1",
-        (el) => el.textContent?.trim() || "0 / 0"
-      );
+      // Extract numbers using regex
+      const totalImpressions =
+        html
+          .match(/<h1[^>]*>([0-9 ]+)<\/h1>/g)?.[0]
+          ?.replace(/<[^>]+>/g, "")
+          ?.trim() || "0";
 
-      const totalClicksText = await page.$eval(
-        ".panel-body .col-md-3:nth-child(2) h1",
-        (el) => el.textContent?.trim() || "0"
-      );
+      const uniqueImpressions =
+        html
+          .match(/<h1[^>]*>([0-9 ]+) \//g)?.[0]
+          ?.replace(/<[^>]+>/g, "")
+          ?.replace("/", "")
+          ?.trim() || "0";
 
-      const [uniqueImpressions] = uniqueUsersText.split(" / ");
+      const totalClicks =
+        html
+          .match(/<h1[^>]*>([0-9 ]+)<\/h1>/g)?.[1]
+          ?.replace(/<[^>]+>/g, "")
+          ?.trim() || "0";
 
-      const stats = {
-        totalImpressions: await page.$eval(
-          ".panel-body .col-md-3:nth-child(1) h1",
-          (el) => el.textContent?.trim() || "0"
-        ),
-        uniqueImpressions: uniqueImpressions || "0",
-        totalClicks: totalClicksText,
+      return {
+        totalImpressions,
+        uniqueImpressions,
+        totalClicks,
       };
-
-      return stats;
     } catch (error) {
       await this.logger.logError("WebScraper", error as Error);
       throw error;
-    } finally {
-      await browser.close();
     }
   }
 }
