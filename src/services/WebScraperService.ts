@@ -21,7 +21,10 @@ export class WebScraperService {
         "--single-process",
       ],
       headless: true,
-      executablePath: undefined,
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? "/opt/render/.cache/puppeteer/chrome/linux-131.0.6778.264/chrome-linux64/chrome"
+          : undefined,
     };
 
     console.log("Launching browser with options:", browserOptions);
