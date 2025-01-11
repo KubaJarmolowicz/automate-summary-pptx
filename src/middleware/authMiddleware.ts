@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import path from "path";
 
 export const protectForm = (
   req: Request & { session: any },
@@ -18,6 +19,9 @@ export const protectForm = (
 
   if (req.session.isAuthenticated) {
     console.log("User is authenticated, proceeding...");
+    if (req.path === "/") {
+      return res.sendFile(path.join(__dirname, "../public/index.html"));
+    }
     return next();
   }
 

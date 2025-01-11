@@ -10,6 +10,7 @@ import { protectForm } from "./middleware/authMiddleware";
 import session from "express-session";
 import { createClient } from "redis";
 import ConnectRedis from "connect-redis";
+import { Request, Response, NextFunction } from "express";
 
 const RedisStore = ConnectRedis(session);
 
