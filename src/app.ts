@@ -21,48 +21,21 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Session configuration
-let sessionConfig: session.SessionOptions = {
-  secret: process.env.SESSION_SECRET || "your-secret-key",
-  resave: true,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
-    sameSite: "strict",
-  },
-  rolling: true,
-  name: "sessionId",
-};
-
-// Only use Redis in production and when REDIS_URL is available
-if (process.env.NODE_ENV === "production" && process.env.REDIS_URL) {
-  const redisClient = createClient({
-    url: process.env.REDIS_URL,
-    socket: {
-      reconnectStrategy: (retries) => Math.min(retries * 50, 1000),
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your-secret-key",
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "lax",
     },
-  });
-
-  redisClient.on("error", (err) => {
-    console.error("Redis Client Error:", err);
-  });
-
-  redisClient.connect().catch((err) => {
-    console.error("Redis Connection Error:", err);
-    // Fall back to memory store if Redis fails
-    console.log("Falling back to memory store");
-  });
-
-  const redisStore = new RedisStore({
-    client: redisClient,
-    prefix: "session:",
-  });
-
-  sessionConfig.store = redisStore;
-}
-
-app.use(session(sessionConfig));
+    rolling: true,
+    name: "sessionId",
+  })
+);
 
 app.use((req, res, next) => protectForm(req, res, next));
 app.use(express.static(path.join(__dirname, "public")));

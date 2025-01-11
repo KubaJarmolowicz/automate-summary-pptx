@@ -9,7 +9,6 @@ export const protectForm = (
     return next();
   }
 
-  // Check session instead of query params
   if (req.session.isAuthenticated) {
     return next();
   }
@@ -19,14 +18,7 @@ export const protectForm = (
     req.body.password === process.env.FORM_PASSWORD
   ) {
     req.session.isAuthenticated = true;
-    req.session.save((err: Error | null) => {
-      if (err) {
-        console.error("Session save error:", err);
-        return res.status(500).send("Error saving session");
-      }
-      res.setHeader("Cache-Control", "no-store");
-      return res.redirect("/");
-    });
+    res.redirect("/");
     return;
   }
 
