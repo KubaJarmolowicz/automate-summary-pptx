@@ -31,12 +31,24 @@ let sessionConfig: session.SessionOptions = {
   },
 };
 
-// Only use Redis in production
-if (process.env.NODE_ENV === "production") {
+// Only use Redis in production and when REDIS_URL is available
+if (process.env.NODE_ENV === "production" && process.env.REDIS_URL) {
   const redisClient = createClient({
     url: process.env.REDIS_URL,
+    socket: {
+      reconnectStrategy: (retries) => Math.min(retries * 50, 1000),
+    },
   });
-  redisClient.connect().catch(console.error);
+
+  redisClient.on("error", (err) => {
+    console.error("Redis Client Error:", err);
+  });
+
+  redisClient.connect().catch((err) => {
+    console.error("Redis Connection Error:", err);
+    // Fall back to memory store if Redis fails
+    console.log("Falling back to memory store");
+  });
 
   const redisStore = new RedisStore({
     client: redisClient,
