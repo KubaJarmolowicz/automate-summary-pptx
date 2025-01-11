@@ -27,11 +27,15 @@ export const protectForm = (
   ) {
     console.log("Password correct, setting session...");
     req.session.isAuthenticated = true;
-    // Wait for session to be set before redirect
-    return req.session.save(() => {
-      console.log("Session saved, redirecting...");
-      res.redirect("/");
+    req.session.save((err: Error | null) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).send("Session error");
+      }
+      console.log("Session saved with ID:", req.sessionID);
+      return res.redirect("/");
     });
+    return;
   }
 
   console.log("Not authenticated, showing login form...");
