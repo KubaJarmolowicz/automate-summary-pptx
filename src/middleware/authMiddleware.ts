@@ -19,7 +19,15 @@ export const protectForm = (
     req.body.password === process.env.FORM_PASSWORD
   ) {
     req.session.isAuthenticated = true;
-    return res.redirect("/");
+    req.session.save((err: Error | null) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).send("Error saving session");
+      }
+      res.setHeader("Cache-Control", "no-store");
+      return res.redirect("/");
+    });
+    return;
   }
 
   res.status(401).send(`
