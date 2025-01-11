@@ -18,11 +18,9 @@ export class WebScraperService {
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
-        "--single-process",
       ],
       headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-      dumpio: true,
+      executablePath: undefined,
     };
 
     console.log("Launching browser with options:", browserOptions);
