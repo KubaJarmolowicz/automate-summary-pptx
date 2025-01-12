@@ -3,6 +3,7 @@ import { ImageService } from "../services/ImageService";
 import { PresentationService } from "../services/PresentationService";
 import { EmailService } from "../services/EmailService";
 import { WebScraperService } from "../services/WebScraperService";
+import { StatsService } from "../services/StatsService";
 //import { OpenAIService } from "../services/OpenAIService";
 
 export class PresentationController {
@@ -62,7 +63,20 @@ export class PresentationController {
           throw new Error("Odbiorca emaila nie jest skonfigurowany");
         }
 
-        await this.emailService.sendPresentation(recipientEmail, presentation);
+        const stats = StatsService.calculateStats(scrapedStats, benchmark);
+
+        await this.emailService.sendPresentation(
+          recipientEmail,
+          presentation,
+          scrapedStats,
+          goal,
+          benchmark,
+          category,
+          stats,
+          format,
+          campaignName,
+          date
+        );
 
         res.json({ message: "Prezentacja została wygenerowana i wysłana" });
       } catch (error) {

@@ -24,6 +24,21 @@ function handlePaste(e) {
   }
 }
 
+// Initialize year select options
+function initYearSelect() {
+  const yearSelect = document.querySelector('select[name="year"]');
+  const currentYear = new Date().getFullYear();
+
+  yearSelect.innerHTML = `
+    <option value="${currentYear - 1}">${currentYear - 1}</option>
+    <option value="${currentYear}" selected>${currentYear}</option>
+    <option value="${currentYear + 1}">${currentYear + 1}</option>
+  `;
+}
+
+// Call it when page loads
+initYearSelect();
+
 document
   .getElementById("presentationForm")
   .addEventListener("submit", async (e) => {
@@ -39,7 +54,7 @@ document
     const data = {
       campaignName: formData.get("campaignName"),
       format: formData.get("format"),
-      date: formData.get("date"),
+      date: `${formData.get("date")}.${formData.get("year")}`,
       goal: formData.get("goal"),
       url: formData.get("url"),
       benchmark: formData.get("benchmark"),

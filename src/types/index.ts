@@ -1,4 +1,4 @@
-interface ScrapedStats {
+export interface ScrapedStats {
   totalImpressions: string;
   uniqueImpressions: string;
   totalClicks: string;
@@ -20,6 +20,7 @@ export interface PresentationRequest {
   campaignName: string;
   format: string;
   date: string;
+  year: string;
   goal: string;
   url: string;
   benchmark: string;

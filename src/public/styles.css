@@ -197,7 +197,7 @@ select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23444' d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.763L10.825 4z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.7rem center;
+  background-position: right 0.3rem center;
   background-size: 0.8rem;
   height: calc(var(--base-size) * 2.25);
   line-height: 1;
@@ -254,4 +254,37 @@ select:focus {
   to {
     transform: scaleX(0);
   }
+}
+
+.date-group {
+  display: flex;
+  gap: calc(var(--base-size) * 0.5);
+  width: 100%;
+  align-items: center;
+}
+
+.date-group input,
+.date-group select {
+  margin: calc(var(--base-size) * 0.25) 0;
+  height: calc(var(--base-size) * 2.25);
+  box-sizing: border-box;
+}
+
+.date-group input {
+  flex: 1;
+}
+
+.date-group select {
+  width: auto;
+  min-width: calc(var(--base-size) * 4);
+  padding-right: calc(var(--base-size) * 1.5);
+  color: #000;
+}
+
+.date-group select option {
+  color: #000;
+}
+
+.date-group select:invalid {
+  color: #757575;
 }
