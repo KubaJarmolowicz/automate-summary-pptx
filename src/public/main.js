@@ -28,14 +28,14 @@ document
   .getElementById("presentationForm")
   .addEventListener("submit", async (e) => {
     e.preventDefault();
-
-    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
 
     submitBtn.disabled = true;
     submitBtn.innerHTML = `${originalText}<span class="spinner"></span>`;
 
-    const formData = new FormData(e.target);
+    const formData = new FormData(form);
     const data = {
       campaignName: formData.get("campaignName"),
       format: formData.get("format"),
@@ -44,10 +44,8 @@ document
       url: formData.get("url"),
       benchmark: formData.get("benchmark"),
       category: formData.get("category"),
-      email: formData.get("email"),
     };
 
-    // Convert image to base64
     const file = formData.get("image");
     if (file) {
       data.image = await new Promise((resolve) => {
@@ -76,6 +74,7 @@ document
       }
 
       showToast("Prezentacja wysłana na maila!", "success");
+      form.reset();
     } catch (error) {
       console.error(error);
       showToast(error.message || "Coś się nie udało :(", "error");
@@ -97,21 +96,33 @@ function showToast(message, type = "success") {
   toast.className = `toast toast-${type}`;
   toast.textContent = message;
 
+  // Add progress bar
+  const progress = document.createElement("div");
+  progress.className = "toast-progress";
+  toast.appendChild(progress);
+
+  // Add click handler
+  toast.addEventListener("click", () => {
+    toast.classList.remove("show");
+    setTimeout(() => container.removeChild(toast), 300);
+  });
+
   container.appendChild(toast);
+  toast.offsetHeight; // Trigger reflow
 
-  // Trigger reflow to enable animation
-  toast.offsetHeight;
-
-  // Show toast
   requestAnimationFrame(() => {
     toast.classList.add("show");
   });
 
-  // Remove toast after 5 seconds
+  // Remove toast after 10 seconds
   setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => {
-      container.removeChild(toast);
-    }, 300); // Wait for hide animation
-  }, 5000);
+    if (container.contains(toast)) {
+      toast.classList.remove("show");
+      setTimeout(() => {
+        if (container.contains(toast)) {
+          container.removeChild(toast);
+        }
+      }, 300);
+    }
+  }, 10000);
 }

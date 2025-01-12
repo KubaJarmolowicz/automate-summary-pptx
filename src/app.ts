@@ -8,11 +8,7 @@ import path from "path";
 import routes from "./routes";
 import { protectForm } from "./middleware/authMiddleware";
 import session from "express-session";
-import { createClient } from "redis";
-import ConnectRedis from "connect-redis";
 import { Request, Response, NextFunction } from "express";
-
-const RedisStore = ConnectRedis(session);
 
 const app = express();
 const logger = new LogService();

@@ -23,17 +23,11 @@ export class PresentationController {
         benchmark,
         category,
         image,
-        email,
       } = req.body;
 
       // Validate input
       if (!image) {
         res.status(400).json({ error: "Image is required" });
-        return;
-      }
-
-      if (!email) {
-        res.status(400).json({ error: "Email is required" });
         return;
       }
 
@@ -62,10 +56,15 @@ export class PresentationController {
             stats: scrapedStats, // Pass scraped stats to presentation
           });
 
-        // Send email
-        await this.emailService.sendPresentation(email, presentation);
+        // Replace email from form with environment variable
+        const recipientEmail = process.env.RECEPIENT;
+        if (!recipientEmail) {
+          throw new Error("Odbiorca emaila nie jest skonfigurowany");
+        }
 
-        res.json({ success: true });
+        await this.emailService.sendPresentation(recipientEmail, presentation);
+
+        res.json({ message: "Prezentacja została wygenerowana i wysłana" });
       } catch (error) {
         console.error("Processing error:", error);
         res.status(500).json({

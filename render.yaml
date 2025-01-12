@@ -15,12 +15,3 @@ services:
         sync: false
       - key: SENDGRID_VERIFIED_EMAIL
         sync: false
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: session-store
-          property: connectionString
-
-  - type: redis
-    name: session-store
-    ipAllowList: []

@@ -19,20 +19,29 @@ export class WebScraperService {
         html
           .match(/<h1[^>]*>([0-9 ]+)<\/h1>/g)?.[0]
           ?.replace(/<[^>]+>/g, "")
-          ?.trim() || "0";
+          ?.trim() || "null";
 
       const uniqueImpressions =
         html
           .match(/<h1[^>]*>([0-9 ]+) \//g)?.[0]
           ?.replace(/<[^>]+>/g, "")
           ?.replace("/", "")
-          ?.trim() || "0";
+          ?.trim() || "null";
 
       const totalClicks =
         html
           .match(/<h1[^>]*>([0-9 ]+)<\/h1>/g)?.[1]
           ?.replace(/<[^>]+>/g, "")
-          ?.trim() || "0";
+          ?.trim() || "null";
+
+      // Validate that we got actual numbers
+      if (
+        isNaN(Number(totalImpressions)) ||
+        isNaN(Number(uniqueImpressions)) ||
+        isNaN(Number(totalClicks))
+      ) {
+        throw new Error("Nie znaleziono wymaganych danych na stronie");
+      }
 
       return {
         totalImpressions,
@@ -41,7 +50,9 @@ export class WebScraperService {
       };
     } catch (error) {
       await this.logger.logError("WebScraper", error as Error);
-      throw error;
+      throw new Error(
+        "Nie udało się pobrać danych ze strony. Sprawdź czy URL jest poprawny i czy masz dostęp do statystyk."
+      );
     }
   }
 }

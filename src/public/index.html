@@ -23,11 +23,30 @@
           placeholder="Nazwa kampanii"
           required
         />
-        <input type="text" name="format" placeholder="Format" required />
+        <select name="format" required>
+          <option value="" disabled selected>Format</option>
+          <option value="AdInsert">AdInsert</option>
+          <option value="AdInsert Plus">AdInsert Plus</option>
+          <option value="AdDisplay">AdDisplay</option>
+          <option value="AdDisplay Plus">AdDisplay Plus</option>
+          <option value="AdVideo">AdVideo</option>
+          <option value="SuperBanner">SuperBanner</option>
+        </select>
         <input type="text" name="date" placeholder="Data" required />
-        <input type="text" name="goal" placeholder="Cel" required />
-        <input type="text" name="url" placeholder="URL" required />
-        <input type="text" name="benchmark" placeholder="Benchmark" required />
+        <input type="number" name="goal" required placeholder="Cel" />
+        <input
+          type="text"
+          name="url"
+          placeholder="URL ze statystykami"
+          required
+        />
+        <input
+          type="number"
+          name="benchmark"
+          required
+          placeholder="Benchmark"
+          step="0.01"
+        />
         <input type="text" name="category" placeholder="Kategoria" required />
       </div>
 
@@ -41,8 +60,7 @@
         />
       </div>
 
-      <input type="email" name="email" placeholder="Your email" required />
-      <button type="submit">Generate Presentation</button>
+      <button type="submit">Wygeneruj prezentację</button>
     </form>
     <script src="main.js"></script>
   </body>
