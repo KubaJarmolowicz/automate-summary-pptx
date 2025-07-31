@@ -24,6 +24,7 @@
     "express-rate-limit": "^7.5.0",
     "express-session": "^1.18.1",
     "jszip": "^3.10.1",
+    "nodemailer": "^7.0.5",
     "openai": "^4.78.1",
     "pizzip": "^3.1.7",
     "sharp": "^0.33.5"
@@ -32,6 +33,7 @@
     "@types/express": "^5.0.0",
     "@types/express-session": "^1.18.1",
     "@types/node": "^22.10.5",
+    "@types/nodemailer": "^6.4.17",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.3"
   }

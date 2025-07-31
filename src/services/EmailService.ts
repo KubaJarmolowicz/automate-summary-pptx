@@ -1,10 +1,18 @@
-import sgMail from "@sendgrid/mail";
+import nodemailer from "nodemailer";
 import { ScrapedStats } from "../types";
 import { StatsService } from "./StatsService";
 
 export class EmailService {
+  private transporter: nodemailer.Transporter;
+
   constructor() {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
+    this.transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
   }
 
   async sendPresentation(
@@ -41,21 +49,19 @@ export class EmailService {
       isLowerThanBenchmark ? "u" : ""
     } dla kategorii ${category} o ${ppDiff}`;
 
-    const msg = {
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
       to: recipientEmail,
-      from: process.env.SENDGRID_VERIFIED_EMAIL || "",
       subject: `Podsumowanie kampanii ${campaignName} ${date}`,
       text: emailText,
       attachments: [
         {
-          content: presentation.toString("base64"),
           filename: `podsumowanie_${campaignName}_${date}.pptx`,
-          type: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-          disposition: "attachment",
+          content: presentation,
         },
       ],
     };
 
-    await sgMail.send(msg);
+    await this.transporter.sendMail(mailOptions);
   }
 }
